@@ -3,11 +3,13 @@
 #include <stdbool.h>
 #include <string.h>
 
+// Define constants
 #define MAX_RAM 512
 #define CPU2_RAM 2048
 #define CPU_CAPACITY 100
 #define QUANTUM_TIME 8
 
+// Define the Process structure
 typedef struct {
     char id[10];
     int arrival_time;
@@ -19,24 +21,29 @@ typedef struct {
     int remaining_time; // Add remaining_time for Round Robin
 } Process;
 
+// Define the Node structure (for the queue)
 typedef struct Node {
     Process* process;
     struct Node* next;
 } Node;
 
+// Define the Queue structure
 typedef struct {
     Node* front;
     Node* rear;
 } Queue;
 
+// Initialize the queue
 void initQueue(Queue* q) {
     q->front = q->rear = NULL;
 }
 
+// Check if the queue is empty
 bool isQueueEmpty(Queue* q) {
     return q->front == NULL;
 }
 
+// Add a process to the queue
 void enqueue(Queue* q, Process* process) {
     Node* temp = (Node*)malloc(sizeof(Node));
     temp->process = process;
@@ -48,7 +55,7 @@ void enqueue(Queue* q, Process* process) {
     q->rear->next = temp;
     q->rear = temp;
 }
-
+// Remove a process from the queue
 Process* dequeue(Queue* q) {
     if (isQueueEmpty(q)) {
         return NULL;
@@ -63,6 +70,7 @@ Process* dequeue(Queue* q) {
     return process;
 }
 
+// Read processes from a file
 Process* readProcesses(const char* filename, int* process_count) {
     FILE* file = fopen(filename, "r");
     if (!file) {
