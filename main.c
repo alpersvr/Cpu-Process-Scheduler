@@ -178,20 +178,36 @@ void sjfScheduling(Queue* queue, FILE* output, int* available_ram, int* current_
         }
     }
 }
-void printQueueStatus(Queue* queue, const char* queue_name, const char* description) {
-    printf("%s (%s) -> ", queue_name, description);
-    Node* temp = queue->front;
-    while (temp != NULL) {
-        printf("%s", temp->process->id);
-        if (temp->next != NULL) {
-            printf("-");
+
+
+void roundRobinScheduling(Queue* queue, FILE* output, int* available_ram, int* current_time, char* processed_order, int quantum_time) {
+    while (!isQueueEmpty(queue)) {
+        Process* process = dequeue(queue);
+
+        if (*current_time < process->arrival_time) {
+            *current_time = process->arrival_time;
         }
-        temp = temp->next;
+
+        fprintf(output, "Process %s is assigned to CPU-2 at time %d.\n", process->id, *current_time);
+
+        int time_slice = (process->remaining_time < quantum_time) ? process->remaining_time : quantum_time;
+        process->remaining_time -= time_slice;
+        *current_time += time_slice;
+
+        if (process->remaining_time > 0) {
+            enqueue(queue, process);
+            fprintf(output, "Process %s is preempted and re-queued with remaining time %d at time %d.\n", process->id, process->remaining_time, *current_time);
+        } else {
+            process->completed = true;
+            fprintf(output, "Process %s is completed and terminated at time %d.\n", process->id, *current_time);
+            *available_ram += process->ram_required;
+
+            // Add the process id to the processed order list
+            strcat(processed_order, process->id);
+            strcat(processed_order, "-");
+        }
     }
-    printf("\n");
 }
-
-
 
 
 int main(int argc, char* argv[]) {
