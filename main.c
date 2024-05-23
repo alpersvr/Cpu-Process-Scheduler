@@ -217,6 +217,19 @@ void roundRobinScheduling(Queue* queue, FILE* output, int* available_ram, int* c
         }
     }
 }
+// Print the status of the queue
+void printQueueStatus(Queue* queue, const char* queue_name, const char* description) {
+    printf("%s (%s) -> ", queue_name, description);
+    Node* temp = queue->front;
+    while (temp != NULL) {
+        printf("%s", temp->process->id);
+        if (temp->next != NULL) {
+            printf("-");
+        }
+        temp = temp->next;
+    }
+    printf("\n");
+}
 
 
 int main(int argc, char* argv[]) {
