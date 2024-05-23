@@ -100,10 +100,11 @@ Process* readProcesses(const char* filename, int* process_count) {
     return processes;
 }
 
+// Check if resources are sufficient for the process
 bool checkResources(Process* process, int available_ram, int available_cpu) {
     return process->ram_required <= available_ram && process->cpu_required <= available_cpu;
 }
-
+// FCFS (First-Come, First-Served) scheduling function
 void fcfsScheduling(Queue* queue, FILE* output, int* available_ram, int* current_time, char* processed_order) {
     while (!isQueueEmpty(queue)) {
         Process* process = dequeue(queue);
